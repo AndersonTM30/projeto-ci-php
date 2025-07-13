@@ -1,27 +1,48 @@
 name: PHP CI
 
 on:
-    push:
-        branches: ["main"]
-    pull_request:
-        branches: ["main"]
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main", "feature/docker-build" ]
     
 jobs:
-    build-and-test:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                php-version: '8.3'
-                extensios: mbstring, xml
-                tools: composer
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensios: mbstring, xml
+          tools: composer
 
-            - name: Install dependencies
-              run: composer install --prefer-dist --no-progress
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
 
-            - name: Run tests
-              run: ./vendor/bin/phpunit
+      - name: Run tests
+        run: ./vendor/bin/phpunit
+
+  build-docker-image:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: projet-ci-php:latest
