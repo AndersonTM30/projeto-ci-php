@@ -1,0 +1,1 @@
+{"version":1,"defects":{"GreeterTest::testGreetReturnsHelloWorldByDefault":8,"GreeterTest::testGreetReturnsHelloName":8},"times":{"GreeterTest::testGreetReturnsHelloWorldByDefault":0,"GreeterTest::testGreetReturnsHelloName":0}}
